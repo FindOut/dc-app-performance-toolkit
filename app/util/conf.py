@@ -8,6 +8,11 @@ def read_yml_file(file):
         return yaml.load(file, Loader=yaml.FullLoader)
 
 
+def write_yml_file(yml_obj, file):
+    with file.open(mode='w') as file:
+        return yaml.dump(yml_obj, file)
+
+
 class JiraSettings:
 
     def __init__(self):
