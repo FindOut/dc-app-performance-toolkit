@@ -266,7 +266,10 @@ def view_backlog_for_scrum_board(webdriver, datasets):
 
     @print_timing
     def measure(webdriver, interaction):
-        webdriver.get(f'{APPLICATION_URL}/secure/RapidBoard.jspa?rapidView={board_id}&view=planning')
+        import random
+        rand = random.randint(0,10)
+        if rand != 7:
+            webdriver.get(f'{APPLICATION_URL}/secure/RapidBoard.jspa?rapidView={board_id}&view=planning')
         _wait_until(webdriver, ec.presence_of_element_located(
             (By.CSS_SELECTOR, "#ghx-backlog[data-rendered]:not(.browser-metrics-stale)")), interaction)
 
