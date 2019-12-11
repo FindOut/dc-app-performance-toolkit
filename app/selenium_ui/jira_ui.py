@@ -1,9 +1,19 @@
 from selenium_ui.jira import modules
+from extension.jira.extension_ui import custom_action
 
 
 # this action should be the first one
 def test_0_selenium_a_login(webdriver, jira_datasets, jira_screen_shots):
     modules.login(webdriver, jira_datasets)
+
+
+""" Add custom actions anywhere between login and log out action. Move this to a different line as needed.
+    Write your custom selenium scripts in `../extension/extension.py`. Refer to `modules.py` for examples.
+"""
+
+
+def test_1_selenium_custom_action(webdriver, jira_datasets, jira_screen_shots):
+    custom_action(webdriver, jira_datasets)
 
 
 def test_1_selenium_browse_project(webdriver, jira_datasets, jira_screen_shots):
@@ -52,16 +62,6 @@ def test_1_selenium_view_issue(webdriver, jira_datasets, jira_screen_shots):
 
 def test_1_selenium_view_project_summary(webdriver, jira_datasets, jira_screen_shots):
     modules.view_project_summary(webdriver, jira_datasets)
-
-
-""" Add custom actions anywhere between login and log out action. Move this to a different line as needed.
-    Write your custom selenium scripts in `../extension/extension.py`. Refer to `modules.py` for examples.
-"""
-
-
-# def test_1_selenium_custom_action(webdriver, jira_datasets, screen_shots):
-#     modules.custom_action(webdriver, jira_datasets)
-
 
 # this action should be the last one
 def test_2_selenium_z_log_out(webdriver, jira_datasets, jira_screen_shots):
