@@ -867,10 +867,10 @@ trikit = new Trikit();
 
 if (vars.get(&quot;GIT_PROTOCOL&quot;).equals(&quot;http&quot;)) {
 	credentials = new UsernamePassword(username, password)
-	metrics = trikit.fetch(repoUrl, null, credentials, 5000L, 0.1)
+	metrics = trikit.fetch(repoUrl, null, credentials, 5000L)
 } else {
 	path = Paths.get(sshKey)
-	metrics = trikit.fetch(repoUrl, (Path) path, null, 5000L, 0.1)
+	metrics = trikit.fetch(repoUrl, (Path) path, null, 5000L)
 }
 
 SampleResult.setBytes(metrics.bytesRead)
