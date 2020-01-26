@@ -848,7 +848,7 @@ vars.put(&quot;REPO_FOLDER&quot;, gitTmpWorkspace + &quot;/clone-push-&quot; + v
             </JSR223PreProcessor>
             <hashTree/>
           </hashTree>
-          <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="[Trikit] Full clone a random repository over ${GIT_PROTOCOL}" enabled="true">
+          <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="[Trikit] Fetch a random repository over ${GIT_PROTOCOL}" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="filename"></stringProp>
             <stringProp name="parameters"></stringProp>
@@ -867,10 +867,10 @@ trikit = new Trikit();
 
 if (vars.get(&quot;GIT_PROTOCOL&quot;).equals(&quot;http&quot;)) {
 	credentials = new UsernamePassword(username, password)
-	metrics = trikit.clone(repoUrl, null, credentials, 5000L)
+	metrics = trikit.fetch(repoUrl, null, credentials, 5000L, 0.1)
 } else {
 	path = Paths.get(sshKey)
-	metrics = trikit.clone(repoUrl, (Path) path, null, 5000L)
+	metrics = trikit.fetch(repoUrl, (Path) path, null, 5000L, 0.1)
 }
 
 SampleResult.setBytes(metrics.bytesRead)
