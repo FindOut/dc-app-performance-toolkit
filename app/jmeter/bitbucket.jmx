@@ -773,7 +773,7 @@ if (localWorkingCopy.exists()) {
           <hashTree/>
         </hashTree>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="trikit" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Clone" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
@@ -848,36 +848,78 @@ vars.put(&quot;REPO_FOLDER&quot;, gitTmpWorkspace + &quot;/clone-push-&quot; + v
             </JSR223PreProcessor>
             <hashTree/>
           </hashTree>
-          <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="[Trikit] Fetch a random repository over ${GIT_PROTOCOL}" enabled="true">
-            <stringProp name="cacheKey">true</stringProp>
-            <stringProp name="filename"></stringProp>
-            <stringProp name="parameters"></stringProp>
-            <stringProp name="script">import com.atlassian.trikit.Trikit
-import com.atlassian.trikit.UsernamePassword
-import java.nio.file.Path
-import java.nio.file.Paths
+          <SystemSampler guiclass="SystemSamplerGui" testclass="SystemSampler" testname="[OS Sampler] Clone no checkout a random repo over ${GIT_PROTOCOL}" enabled="true">
+            <boolProp name="SystemSampler.checkReturnCode">false</boolProp>
+            <stringProp name="SystemSampler.expectedReturnCode">0</stringProp>
+            <stringProp name="SystemSampler.command">git</stringProp>
+            <elementProp name="SystemSampler.arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="Argument">
+                  <stringProp name="Argument.name"></stringProp>
+                  <stringProp name="Argument.value">clone</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Argument">
+                  <stringProp name="Argument.name"></stringProp>
+                  <stringProp name="Argument.value">--no-checkout</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Argument">
+                  <stringProp name="Argument.name"></stringProp>
+                  <stringProp name="Argument.value">${REPO_URL}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Argument">
+                  <stringProp name="Argument.name"></stringProp>
+                  <stringProp name="Argument.value">${REPO_FOLDER}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <elementProp name="SystemSampler.environment" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="DISABLED_GIT_CURL_VERBOSE" elementType="Argument">
+                  <stringProp name="Argument.name">DISABLED_GIT_CURL_VERBOSE</stringProp>
+                  <stringProp name="Argument.value">1</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="DISABLED_GIT_TRACE_PACKET" elementType="Argument">
+                  <stringProp name="Argument.name">DISABLED_GIT_TRACE_PACKET</stringProp>
+                  <stringProp name="Argument.value">true</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="GIT_SSH_COMMAND" elementType="Argument">
+                  <stringProp name="Argument.name">GIT_SSH_COMMAND</stringProp>
+                  <stringProp name="Argument.value">${__P(GIT_SSH_COMMAND)}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <stringProp name="SystemSampler.directory">${__P(GIT_TMP_WORKSPACE)}</stringProp>
+          </SystemSampler>
+          <hashTree>
+            <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="OS Process Result" enabled="true">
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="script">import org.apache.commons.lang3.StringUtils;
 
+def responseCode = prev.getResponseCode();
 
-def username = vars.get(&quot;USERNAME&quot;)
-def password = vars.get(&quot;USER_PASSWORD&quot;)
+if (responseCode != &quot;0&quot;) {
+	String responseData = prev.getResponseDataAsString();
+	String outputMessage = StringUtils.abbreviate(responseData.replaceAll(&quot;\n&quot;, &quot; &quot;), 100);
+	prev.setResponseMessage(&quot;git clone failed: &quot; + outputMessage);
 
-repoUrl = vars.get(&quot;REPO_URL&quot;)
-sshKey = props.get(&quot;PRIVATE_SSH_KEY_LOCATION&quot;);
-trikit = new Trikit();
+	prev.setSuccessful(false);
 
-if (vars.get(&quot;GIT_PROTOCOL&quot;).equals(&quot;http&quot;)) {
-	credentials = new UsernamePassword(username, password)
-	metrics = trikit.fetch(repoUrl, null, credentials, 5000L, 0.1)
-} else {
-	path = Paths.get(sshKey)
-	metrics = trikit.fetch(repoUrl, (Path) path, null, 5000L, 0.1)
-}
-
-SampleResult.setBytes(metrics.bytesRead)
-</stringProp>
-            <stringProp name="scriptLanguage">groovy</stringProp>
-          </JSR223Sampler>
-          <hashTree/>
+	String envData = prev.getSamplerData();
+	log.error(responseData + envData);
+}</stringProp>
+              <stringProp name="scriptLanguage">groovy</stringProp>
+            </JSR223PostProcessor>
+            <hashTree/>
+          </hashTree>
         </hashTree>
       </hashTree>
       <PostThreadGroup guiclass="PostThreadGroupGui" testclass="PostThreadGroup" testname="tearDown Thread Group" enabled="true">
