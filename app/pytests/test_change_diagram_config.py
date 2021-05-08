@@ -30,10 +30,21 @@ class TestChangeDiagram:
         print_in_shell("User key: " + userKey)
 
         # Create diagram
-        payload ={ 'name':"D100", 'author':userKey,
-           'lastEditedBy':userKey, 'layoutId':0, 'filterKey': 10000,
-            'boxColorFieldKey': "priority", 'groupedLayoutFieldKey': "priority", 
-            'matrixLayoutHorizontalFieldKey': 'fixVersions', 'matrixLayoutVerticalFieldKey': 'fixVersions'}
+        payload ={
+          'name':"D100",
+          'author':userKey,
+          'layoutId':0,
+          'filterKey': 10000,
+          'boxColorFieldKey': "priority",
+          'groupedLayoutFieldKey': "priority", 
+          'matrixLayoutHorizontalFieldKey': 'fixVersions',
+          'matrixLayoutVerticalFieldKey': 'fixVersions',
+          'showTypeIcons': True,
+          'parallelIssueBatches': 4,
+          'issuesPerRow': 5,
+          'secondaryIssues': 1,
+          'boxType': 0
+        }
 
         diagrams_response = session.post('/rest/dependency-map/1.0/diagram',
             json=payload)
