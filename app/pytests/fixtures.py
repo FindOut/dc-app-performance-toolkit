@@ -21,8 +21,11 @@ def env_settings():
 
 def get_hostname_port():
     envSetting = env_settings()
-    print(envSetting)
-    hostname_port_var = 'http://' + envSetting['application_hostname'] + ':' + str(envSetting['application_port'])
+    hostname_port_var = (
+        'http://' + envSetting['application_hostname'] + ':'
+        + str(envSetting['application_port'])
+        + str(envSetting['application_postfix'])
+    )
     return hostname_port_var
 
 
@@ -49,7 +52,7 @@ class LiveServerSession(Session):
 
 # get list of all users - except 'admin' if more than one user
 
-print(BASE_URL);
+print("DEBUG BASE_URL: " + BASE_URL)
 users_reponse = requests.get(BASE_URL  + '/rest/api/latest/user/search?username=performance_', auth=('admin', 'admin'))
 assert users_reponse.status_code == 200
 users = list(map(lambda user : user['name'], users_reponse.json()))
