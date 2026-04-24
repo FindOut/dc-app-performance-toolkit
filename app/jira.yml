@@ -12,6 +12,7 @@ settings:
     application_postfix: /jira         # e.g. /jira for TerraForm deployment url like `http://a1234-54321.us-east-2.elb.amazonaws.com/jira`. Leave this value blank for url without postfix.
     admin_login: admin
     admin_password: admin
+    admin_access_token: ENTER_ADMIN_ACCESS_TOKEN  # DM-NOTE: Personal Access Token
     load_executor: jmeter              # jmeter and locust are supported. jmeter by default.
     concurrency: 200                   # number of concurrent virtual users for jmeter or locust scenario
     test_duration: 45m
@@ -42,6 +43,8 @@ settings:
     chrome_options:                # Optional Chrome browser options for Selenium. Avoids manual edits to Python files in CI/CD.
       arguments:                   # List of Chrome command-line arguments, e.g. ["--disable-gpu", "--remote-debugging-port=9222"]
       experimental_options:        # Chrome experimental options. 'prefs' are deep-merged with defaults, so you can override specific keys only.
+    print_in_shell: No            # DM-NOTE added print_in_shell. Default: No
+    max_nr_projects_to_use: 100    # DM-NOTE added max_nr_projects_to_use. Default: 100
 
 services:
   - module: shellexec
@@ -51,7 +54,7 @@ services:
       - python util/data_preparation/jira_prepare_data.py
     shutdown:
       - python util/post_run/jmeter_post_check.py
-      - python util/jtl_convertor/jtls-to-csv.py kpi.jtl selenium.jtl
+      - python util/jtl_convertor/jtls-to-csv.py kpi.jtl selenium.jtl pytests_run.jtl # DM-NOTE added pytests_run.jtl
     post-process:
       - python util/analytics/analytics.py jira
       - python util/post_run/cleanup_results_dir.py
@@ -68,7 +71,15 @@ execution:
     executor: selenium
     runner: pytest
     hold-for: ${test_duration}
+  - scenario: pytest-run # DM-NOTE added pytest-run scenario
+    executor: pytest
+    runner: pytest
+    hold-for: ${test_duration}
+    ramp-up: 3m
+
 scenarios:
+  pytest-run: # DM-NOTE added pytest-run scenario
+    script: pytests/
   selenium:
     script: selenium_ui/jira_ui.py
   locust:
